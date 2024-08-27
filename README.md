@@ -30,6 +30,7 @@ The following requirements are given for the moment (subject to iteration and di
 
 Lets use this datasets (on the LEAP-Pangeo JupyterHub) to prototype plotting functions:
 ```python
+# example output
 import fsspec
 import xarray as xr
 
@@ -42,7 +43,34 @@ with fsspec.open(nc_grid_path) as f:
     ds_grid = xr.open_dataset(f).load().drop_vars('time')
 ds_grid = ds_grid.set_coords(ds_grid.data_vars)
 
-ds = xr.merge([ds_raw, ds_grid])
+# from https://github.com/m2lines/ocean_emulators/issues/17
+dz = xr.DataArray(
+    [
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        70,
+        100,
+        150,
+        200,
+        250,
+        300,
+        400,
+        500,
+        600,
+        800,
+        1000,
+        1000,
+        1000,
+    ],
+    dims=["lev"],
+)
+
+
+ds = xr.merge([ds_raw, ds_grid]).assign_coords(dz=dz)
 ds
 ```
 
