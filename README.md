@@ -26,6 +26,26 @@ The following requirements are given for the moment (subject to iteration and di
 - The input to the function is an xarray Dataset with an expected set of named dimensions/coordinates/data variables
 - We use matplotlib for plotting.
 
+### Working Dataset
+
+Lets use this datasets (on the LEAP-Pangeo JupyterHub) to prototype plotting functions:
+```python
+import fsspec
+import xarray as xr
+
+zarr_data_path = 'gs://leap-persistent/jbusecke/ocean_emulators/OM4/OM4_raw_test.zarr'
+nc_grid_path = 'gs://leap-persistent/sd5313/OM4-5daily/ocean_static_no_mask_table.nc'
+
+ds_raw = xr.open_dataset(zarr_data_path, engine='zarr', chunks={})
+
+with fsspec.open(nc_grid_path) as f:
+    ds_grid = xr.open_dataset(f).load().drop_vars('time')
+ds_grid = ds_grid.set_coords(ds_grid.data_vars)
+
+ds = xr.merge([ds_raw, ds_grid])
+ds
+```
+
 ## Next steps
 
 - Prototype functions e.g. in a notebook during the hack
