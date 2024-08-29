@@ -38,5 +38,9 @@ Each plotting function consumes and returns a matplotlib axis, if no axis is pro
 
 You can find examples of how to use these functions in the [demo notebook](./notebooks/base_plot_demo.ipynb).
 
+## Common methods to compute metrics
+
+This is a much broader topic. In order to make progress I encourage everyone to submit example notebooks (ideally using upstream packages/examples to avoid duplication) as PRs so we can gather an overview of how/what folks acrosse the project think would be useful to add here.
+
 ## Open questions
 - Should we have a set of 'paper friendly' figsizes? Test these in conjunction with mpl styles for font size etc?
