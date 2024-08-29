@@ -40,7 +40,48 @@ You can find examples of how to use these functions in the [demo notebook](./not
 
 ## Common methods to compute metrics
 
-This is a much broader topic. In order to make progress I encourage everyone to submit example notebooks (ideally using upstream packages/examples to avoid duplication) as PRs so we can gather an overview of how/what folks acrosse the project think would be useful to add here.
+This is a much broader topic. In order to make progress I encourage everyone to submit example notebooks (ideally using upstream packages/examples to avoid duplication) as PRs so we can gather an overview of how/what folks acrosse the project think would be useful to add here. Ideally try to use the dataset below on the LEAP-Pangeo Jupyterhub to make things easily testable.
+```python
+# example output
+import fsspec
+import xarray as xr
 
-## Open questions
-- Should we have a set of 'paper friendly' figsizes? Test these in conjunction with mpl styles for font size etc?
+zarr_data_path = 'gs://leap-persistent/jbusecke/ocean_emulators/OM4/OM4_raw_test.zarr'
+nc_grid_path = 'gs://leap-persistent/sd5313/OM4-5daily/ocean_static_no_mask_table.nc'
+
+ds_raw = xr.open_dataset(zarr_data_path, engine='zarr', chunks={})
+
+with fsspec.open(nc_grid_path) as f:
+    ds_grid = xr.open_dataset(f).load().drop_vars('time')
+ds_grid = ds_grid.set_coords(ds_grid.data_vars)
+
+# from https://github.com/m2lines/ocean_emulators/issues/17
+dz = xr.DataArray(
+    [
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        70,
+        100,
+        150,
+        200,
+        250,
+        300,
+        400,
+        500,
+        600,
+        800,
+        1000,
+        1000,
+        1000,
+    ],
+    dims=["lev"],
+)
+
+
+ds = xr.merge([ds_raw, ds_grid]).assign_coords(dz=dz)
+ds
+```
